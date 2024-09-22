@@ -1,106 +1,89 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import {getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut} from 'firebase/auth';
+import styled from 'styled-components'
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
 
 const Nav = () => {
 
   const initialUserData = localStorage.getItem('userData') ?
-      JSON.parse(localStorage.getItem('userData')) : {};
+    JSON.parse(localStorage.getItem('userData')) : {};
 
   const [show, setShow] = useState(false);
-  const {pathname} = useLocation();
+  const { pathname } = useLocation();
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
-  const [userData, setUserData] = useState(initialUserData)
+  const [userData, setUserData] = useState(initialUserData);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      if(user){
-        if(pathname === "/"){
-          navigate("/main")
+      if (user) {
+        if (pathname === "/") {
+          navigate("/main");
         }
-      }else {
-        navigate("/")
+      } else {
+        navigate("/");
       }
     })
   }, [auth, navigate, pathname])
-  
+
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
-  
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scroll', handleScroll);
     }
   }, [])
-  
-  const handleScroll = ()=> {
-    if(window.scrollY > 50) {
+
+  // console.log('useLocation.search', useLocation().search);
+
+  const handleScroll = () => {
+    if (window.scrollY > 50) {
       setShow(true);
-    }else {
+    } else {
       setShow(false);
     }
   }
 
   const handleChange = (e) => {
     setSearchValue(e.target.value);
-    navigate(`/search?q=${e.target.value}`)
+    navigate(`/search?q=${e.target.value}`);
   }
 
   const handleAuth = () => {
     signInWithPopup(auth, provider)
-    .then(result => {
-      setUserData(result.user);
-      localStorage.setItem('userData', JSON.stringify(result.user));
-    })
-    .catch(error => {
-      console.log(error);
-    })
+      .then(result => {
+        setUserData(result.user);
+        localStorage.setItem("userData", JSON.stringify(result.user));
+      })
+      .catch(error => {
+        console.log(error);
+      })
   }
 
-  const handleLogOut = () => {
+  const handleSignOut = () => {
     signOut(auth)
-    .then(() => {
-      setUserData({});
-      navigate("/");
-    })
-    .catch(error => {
-      console.log(error);
-    });
+      .then(() => {
+        setUserData({});
+        navigate(`/`);
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
-
 
   return (
     <NavWrapper show={show}>
       <Logo>
-        <img 
+        <img
           alt="Disney Plus Logo"
           src="/images/logo.svg"
-          onClick={() => (window.location.href = '/')}
+          onClick={() => (window.location.href = "/")}
         />
       </Logo>
 
-      {pathname === "/" ? 
-      (<Login onClick={handleAuth}>Login</Login>) : 
-      <>
-        <Input 
-          value={searchValue}
-          onChange={handleChange}
-          className='nav__input' 
-          type="text" 
-          placeholder='검색해주세요.'
-        />
-        <SignOut>
-          <UserImg src={userData.photoURL} alt={userData.displayName} />
-          <DropDown>
-            <span onClick={handleLogOut}>Sign Out</span>
-          </DropDown>
-        </SignOut>
-      </>
-      }
+    
     </NavWrapper>
   )
 }
@@ -145,30 +128,31 @@ const UserImg = styled.img`
   height: 100%;
 `;
 
+
 const Login = styled.a`
-  background-color: rgba(0,0,0, 0.6);
+  background-color: rgba(0,0,0,0.6);
   padding: 8px 16px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  border: 1px sollid #f9f9f9;
+  border: 1px solid #f9f9f9;
   transition: all 0.2s ease 0s;
 
   &:hover {
-   background-color: #f9f9f9;
-   color: gray;
-   border-color: transparent;
+    background-color: #f9f9f9;
+    color: gray;
+    border-color: transparent;
   }
 `;
 
-const Input = styled.input `
-  position: fixed;
-  left: 50%;
-  transform: translate(-50%, 0);
-  background-color: rgba(0,0,0, 0.582);
-  border-radius: 5px;
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
+const Input = styled.input`
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background-color: rgba(0,0,0, 0.582);
+    border-radius: 5px;
+    color: white; 
+    padding: 5px;
+    border: none;
 `;
 
 const NavWrapper = styled.nav`
@@ -187,12 +171,12 @@ const NavWrapper = styled.nav`
 `;
 
 const Logo = styled.a`
-  padding: 0;
+  padding:0;
   width: 80px;
   margin-top: 4px;
   max-height: 70px;
   font-size: 0;
-  display: inline-block;
+  diplay: inline-block;
 
   img {
     display: block;

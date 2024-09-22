@@ -6,12 +6,12 @@ import "firebase/auth"
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB7gmvG-Nx0zFBJjQX6urk7-M6QqVGp38Q",
-  authDomain: "react-disney-plus-app-6f4a9.firebaseapp.com",
-  projectId: "react-disney-plus-app-6f4a9",
-  storageBucket: "react-disney-plus-app-6f4a9.appspot.com",
-  messagingSenderId: "668838473836",
-  appId: "1:668838473836:web:ce7d956d4fe80e7d49e849"
+  apiKey: "AIzaSyCRIQfz9cbtyLPRnSnnhOKN6IePyJtoiZg",
+  authDomain: "react-disney-plus-app.firebaseapp.com",
+  projectId: "react-disney-plus-app",
+  storageBucket: "react-disney-plus-app.appspot.com",
+  messagingSenderId: "17555251393",
+  appId: "1:17555251393:web:672c0357240c85d4b9f440"
 };
 
 // Initialize Firebase

@@ -3,27 +3,27 @@ import React, { useCallback, useEffect, useState } from 'react'
 import "./Row.css";
 import MovieModal from './MovieModal';
 
-import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
+
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-
+// import swiper style
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/scrollbar";
 import "swiper/css/pagination";
 import styled from 'styled-components';
 
-const Row = ({title, id, fetchUrl}) => {
-
-  const [movies, setMovies] = useState([]);
+const Row = ({ title, id, fetchUrl }) => {
+  const [movies, setMovies] = useState([])
   const [modalOpen, setModalOpen] = useState(false);
-  const [movieSelected, setMovieSelection] = useState({});
+  const [movieSelected, setMovieSelection] = useState({})
 
-  const fetchMovieData = useCallback( async () => {
+  const fetchMovieData = useCallback(async () => {
     const response = await axios.get(fetchUrl);
-    console.log('response', response);
+    // console.log('response', response);
     setMovies(response.data.results);
-  }, [fetchUrl]);
+  }, [fetchUrl])
 
   useEffect(() => {
     fetchMovieData();
@@ -31,15 +31,14 @@ const Row = ({title, id, fetchUrl}) => {
 
   const handleClick = (movie) => {
     setModalOpen(true);
-    setMovieSelection(movie)
+    setMovieSelection(movie);
   }
-  
 
   return (
     <Container>
       <h2>{title}</h2>
       <Swiper
-        //install Swiper modules
+        // install Swiper modules
         modules={[Navigation, Pagination, Scrollbar, A11y]}
         loop={true} //loop 기능을 사용할 것인지
         navigation // arrow 버튼 사용 유무
@@ -67,9 +66,9 @@ const Row = ({title, id, fetchUrl}) => {
           {movies.map(movie => (
             <SwiperSlide key={movie.id}>
               <Wrap>
-                <img 
+                <img
                   key={movie.id}
-                  src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
+                  src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
                   alt={movie.name}
                   onClick={() => handleClick(movie)}
                 />
@@ -77,11 +76,13 @@ const Row = ({title, id, fetchUrl}) => {
             </SwiperSlide>
           ))}
         </Content>
-      </Swiper>  
-      {modalOpen && 
-        <MovieModal 
-          {...movieSelected} 
-          setModalOpen={setModalOpen} 
+      </Swiper>
+
+
+      {modalOpen &&
+        <MovieModal
+          {...movieSelected}
+          setModalOpen={setModalOpen}
         />
       }
     </Container>
