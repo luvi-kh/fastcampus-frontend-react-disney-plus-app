@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser, removeUser } from '../store/userSlice';
 
 const Nav = () => {
-
-  const initialUserData = localStorage.getItem('userData') ?
-    JSON.parse(localStorage.getItem('userData')) : {};
 
   const [show, setShow] = useState(false);
   const { pathname } = useLocation();
@@ -14,7 +13,9 @@ const Nav = () => {
   const navigate = useNavigate();
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
-  const [userData, setUserData] = useState(initialUserData);
+
+  const dispatch = useDispatch();
+  const userData = useSelector(state => state.user);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -54,8 +55,13 @@ const Nav = () => {
   const handleAuth = () => {
     signInWithPopup(auth, provider)
       .then(result => {
-        setUserData(result.user);
-        localStorage.setItem("userData", JSON.stringify(result.user));
+
+        dispatch(setUser({
+          id: result.user.uid,
+          email: result.user.email,
+          displayName: result.user.displayName,
+          photoURL: result.user.photoURL,
+        }))
       })
       .catch(error => {
         console.log(error);
@@ -65,12 +71,22 @@ const Nav = () => {
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
-        setUserData({});
         navigate(`/`);
       })
       .catch((error) => {
         console.log(error)
       })
+  }
+
+    const handleLogOut = () => {
+    signOut(auth)
+    .then(() => {
+      dispatch(removeUser());
+      navigate("/");
+    })
+    .catch(error => {
+      console.log(error);
+    });
   }
 
   return (
@@ -82,6 +98,24 @@ const Nav = () => {
           onClick={() => (window.location.href = "/")}
         />
       </Logo>
+      {pathname === "/" ? 
+      (<Login onClick={handleAuth}>Login</Login>) : 
+      <>
+        <Input 
+          value={searchValue}
+          onChange={handleChange}
+          className='nav__input' 
+          type="text" 
+          placeholder='검색해주세요.'
+        />
+        <SignOut>
+          <UserImg src={userData.photoURL} alt={userData.displayName} />
+          <DropDown>
+            <span onClick={handleLogOut}>Sign Out</span>
+          </DropDown>
+        </SignOut>
+      </>
+      }
 
     
     </NavWrapper>
